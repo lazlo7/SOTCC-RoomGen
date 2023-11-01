@@ -64,8 +64,6 @@ def create_maze(room: Room):
             if ny >= 0 and nx >= 0 and ny < room.height and nx < room.width:
                 st.append((ny, nx, direction))
 
-    print(path)
-
     # Clearing out the walls in the traced path.
     for y, x, direction in path:    
         if direction == None:
@@ -89,9 +87,11 @@ def remove_random_walls(room: Room, emptiness: float):
     walls_h_to_remove_idxs = sample(range(walls_h_n), k=walls_h_to_remove_n)
     walls_v_to_remove_idxs = sample(range(walls_v_n), k=walls_v_to_remove_n)
 
-    # Map to yx values.
-    walls_h_to_remove_idxs = list(map(lambda idx: (idx // room.width + 1, idx % room.width + 1), walls_h_to_remove_idxs))
-    walls_v_to_remove_idxs = list(map(lambda idx: (idx // room.width + 1, idx % room.width + 1), walls_v_to_remove_idxs))
+    # Map to yx values and offset by 1 to not touch main walls.
+    walls_h_to_remove_idxs = list(map(lambda idx: (idx // room.width + 1, idx % room.width), walls_h_to_remove_idxs))
+    # For vertical walls the situation is a little bit more complex, 
+    # since we need to skip a different number of walls for each row.
+    walls_v_to_remove_idxs = list(map(lambda idx: (idx // (room.width - 1), idx % (room.width - 1) + 1), walls_v_to_remove_idxs))
 
     for y, x in walls_h_to_remove_idxs:
         room.walls_h[y][x] = False
@@ -134,7 +134,7 @@ def display_room(room: Room):
         im.show()
 
 if __name__ == "__main__":
-    room = create_grid(101, 101, 50, 50, 50)
+    room = create_grid(15, 30, 7, 3, 11)
     create_maze(room)
-    #remove_random_walls(room, 0.5)
+    remove_random_walls(room, 0.95)
     display_room(room)
