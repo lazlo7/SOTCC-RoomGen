@@ -44,7 +44,7 @@ class Direction(Enum):
 def create_maze(room: Room):
     visited = [ [ False for _ in range(room.width) ] for _ in range(room.height) ]
     path = []
-    st = [ (room.entrance_y, 0, None) ]
+    st: list[tuple[int, int, Direction | None]] = [ (room.entrance_y, 0, None) ]
 
     while len(st) > 0:
         y, x, direction_from = st.pop()
